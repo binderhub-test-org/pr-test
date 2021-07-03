@@ -10,15 +10,11 @@ jobs:
       - name: echo repository
         run: |
           echo ${{ github.repository }}
-      
-      - name: echo repository_owner
-        run: |
-          echo ${{ github.repository_owner }}
-      
+
       - name: echo head_ref
         run: |
           echo ${{ github.head_ref }}
         
       - name: echo event
         run: |
-          echo ${{ github.event }}
+          echo ${{ toJson(github) }}
