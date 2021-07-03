@@ -13,7 +13,7 @@ jobs:
 
       - name: echo repository_owner
         run: |
-          echo ${{ github.event.head.repo.owner.login }}
+          echo ${{ github.event.pull_request.head.repo.owner.login }}
 
       - name: echo PR number
         run: |
