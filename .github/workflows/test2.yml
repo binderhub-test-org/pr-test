@@ -5,6 +5,11 @@ on: [issue_comment]
 jobs:
   test-action:
     runs-on: ubuntu-latest
+    if: |
+      # Check this issue is a pull request
+      (github.event.issue.pull_request != null) &&
+      # Check the comment contains the trigger string
+      contains(github.event.comment.body, '/test-this-pr')
     
     steps:
       - name: echo github event
