@@ -1,0 +1,21 @@
+name: Test action
+
+on: [issue_comment]
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: echo github event
+        run: |
+          echo toJson(github.event)
+       
+      - name: test action
+        uses: sgibson91/test-this-pr-action@master
+        with:
+          repository: ${{ github.repository }}
+          fork-owner: ${{ github.event.pull_request.head.repo.owner.login }}
+          pr-number: ${{ github.event.number }}
+          pr-branch-name: ${{ github.head_ref }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
