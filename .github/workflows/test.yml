@@ -12,5 +12,5 @@ jobs:
       contains(github.event.comment.body, '/test-this-pr')
     
     steps:
-      - name: test action
-        uses: sgibson91/test-this-pr-action@main
+      - uses: actions/checkout@v2.3.4
+      - uses: sgibson91/test-this-pr-action@main
