@@ -10,7 +10,5 @@ jobs:
     if: |
       (github.event.issue.pull_request != null) &&
       contains(github.event.comment.body, '/test-this-pr')
-    
     steps:
-      - uses: actions/checkout@v2.3.4
       - uses: sgibson91/test-this-pr-action@main
