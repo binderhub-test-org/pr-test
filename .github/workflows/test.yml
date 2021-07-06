@@ -11,4 +11,4 @@ jobs:
       (github.event.issue.pull_request != null) &&
       contains(github.event.comment.body, '/test-this-pr')
     steps:
-      - uses: sgibson91/test-this-pr-action@main
+      - uses: sgibson91/test-this-pr-action@github-oauth
