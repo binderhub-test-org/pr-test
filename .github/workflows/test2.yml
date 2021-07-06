@@ -15,7 +15,7 @@ jobs:
           echo toJson(github.event)
        
       - name: test action
-        uses: sgibson91/test-this-pr-action@master
+        uses: sgibson91/test-this-pr-action@main
         with:
           repository: ${{ github.repository }}
           fork-owner: ${{ github.event.pull_request.head.repo.owner.login }}
