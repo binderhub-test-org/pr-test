@@ -5,7 +5,7 @@ on:
     types: [created]
 
 jobs:
-  test-action:
+  echo-event:
     runs-on: ubuntu-latest
     if: |
       (github.event.issue.pull_request != null) &&
@@ -14,8 +14,15 @@ jobs:
     steps:
       - name: echo github event
         run: |
-          echo ${toJSON(github.event)}
-       
+          echo ${{toJSON(github.event)}}
+
+  test-action:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event.issue.pull_request != null) &&
+      contains(github.event.comment.body, '/test-this-pr')
+    
+    steps:
       - name: test action
         uses: sgibson91/test-this-pr-action@main
         with:
