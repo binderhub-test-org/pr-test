@@ -1,6 +1,8 @@
 name: Test action
 
-on: [issue_comment]
+on:
+  issue_comment:
+    types: [created]
 
 jobs:
   test-action:
@@ -12,7 +14,7 @@ jobs:
     steps:
       - name: echo github event
         run: |
-          echo toJson(github.event)
+          echo ${{ toJSON( github.event ) }}
        
       - name: test action
         uses: sgibson91/test-this-pr-action@main
