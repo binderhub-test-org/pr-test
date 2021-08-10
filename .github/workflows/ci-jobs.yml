@@ -18,9 +18,9 @@ jobs:
           echo "Hello World!"
   
   second-job:
-    needs: (main-job.result == 'success') || (main-job.result == 'success')
+    needs: main-job
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Job status: ${{ main-job.result }}"
+          echo "Job status: ${{ needs.main-job.result }}"
     
