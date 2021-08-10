@@ -1,0 +1,26 @@
+name: CI jobs to run
+
+on:
+  push:
+    branches:
+      - main
+      - test-this-pr/**
+
+jobs:
+  main-job:
+    if: |
+      (github.event_name == 'push') &&
+      ((github.ref == 'refs/head/main') ||
+      contains(github.ref, 'test-this-pr')
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Hello World!"
+  
+  second-job:
+    needs: (main-job.result == 'success') || (main-job.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Job status: ${{ main-job.result }}"
+    
