@@ -11,7 +11,7 @@ jobs:
     if: |
       (github.event_name == 'push') &&
       ((github.ref == 'refs/head/main') ||
-      contains(github.ref, 'test-this-pr')
+      contains(github.ref, 'test-this-pr'))
     runs-on: ubuntu-latest
     steps:
       - run: |
