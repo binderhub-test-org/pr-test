@@ -1,10 +1,6 @@
 name: Run test-this-pr action
 
 on:
-  push:
-    branches:
-      - main
-      - "test-this-pr/**"
   issue_comment:
     types: [created]
 
