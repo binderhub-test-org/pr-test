@@ -30,6 +30,7 @@ jobs:
           python -m pytest -vvv
   
   report-status:
+    if: github.event_name == 'push' && contains(github.ref, 'test-this-pr')
     runs-on: ubuntu-latest
     steps:
       - name: Wait for run-tests completion
@@ -40,7 +41,7 @@ jobs:
           conclusion=""
     
           while [ "$status" != "completed" ]; do
-            response=$(curl --request GET \
+            response=$(curl --silent --request GET \
               --url 'https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs' \
               --header 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
               --header 'Accept: application/vnd.github.v3+json')
@@ -48,7 +49,7 @@ jobs:
             status=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
             echo $status
     
-            if [[ $status == 'completed' ]]; then
+            if [[ "$status" == "completed" ]]; then
               conclusion=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .conclusion')
               echo $conclusion
             else
@@ -60,7 +61,8 @@ jobs:
           echo "::set-output name=conclusion::$conclusion"
   
       - name: Echo run-tests result
-        if: ${{ steps.run-tests-result.output.status == 'completed' }}
+        if: |
+          ${{ steps.run-tests-result.output.status == 'completed' }} && ${{ steps.run-tests-result.output.conclusion != '' }}
         run: |
           echo "Job status: ${{ steps.run-tests-result.output.conclusion }}"
   
