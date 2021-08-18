@@ -45,10 +45,10 @@ jobs:
               --header 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
               --header 'Accept: application/vnd.github.v3+json')
     
-            status=$echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
+            status=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
             echo $status
     
-            if [[ $status == completed ]]; then
+            if [[ $status == 'completed' ]]; then
               conclusion=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .conclusion')
               echo $conclusion
             else
