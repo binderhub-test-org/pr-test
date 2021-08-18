@@ -65,24 +65,24 @@ jobs:
         shell: bash
         run: |
           PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}')
-          echo $PR_NUMBER
+          echo "::set-output nameprnum::$PR_NUMBER"
 
-#       - name: Comment on PR with Job Status
-#         if: |
-#           ${{ steps.run-tests-result.outputs.status == 'completed' }}
-#         uses: actions/github-script@v4.0.2
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-#           script: |
-#             var PR_NUMBER = process.env.PR_NUMBER;
-#             var JOB_STATUS = process.env.JOB_STATUS;
+      - name: Comment on PR with Job Status
+        if: |
+          ${{ steps.run-tests-result.outputs.status == 'completed' }}
+        uses: actions/github-script@v4.0.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var PR_NUMBER = process.env.PR_NUMBER;
+            var JOB_STATUS = process.env.JOB_STATUS;
             
-#             github.issues.createComment({
-#               issue_number: ${PR_NUMBER},
-#               owner: context.repo.owner,
-#               repo: context.repo.repo,
-#               body: `Job status: ${JOB_STATUS}`
-#             })
-#         env:
-#           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
-#           PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
+            github.issues.createComment({
+              issue_number: ${PR_NUMBER},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Job status: ${JOB_STATUS}`
+            })
+        env:
+          JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
+          PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
