@@ -60,12 +60,15 @@ jobs:
           echo "::set-output name=status::$status"
           echo "::set-output name=conclusion::$conclusion"
 
-      - name: Set PR number as variable
+      - name: Set PR number and branch ref as variables
         id: get-pr-number
         shell: bash
         run: |
           PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}')
+          BRANCH_REF="heads/test-this-pr/${PR_NUMBER}"
+  
           echo "::set-output name=prnum::$PR_NUMBER"
+          echo "::set-output name=branch_ref::$BRANCH_REF"
 
       - name: Comment on PR with Job Status and delete the branch
         if: |
@@ -93,4 +96,4 @@ jobs:
         env:
           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
           PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
-          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REF: ${{ steps.get-pr-number.outputs.branch_ref }}
