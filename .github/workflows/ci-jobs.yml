@@ -65,7 +65,7 @@ jobs:
         shell: bash
         run: |
           PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}')
-          echo "::set-output nameprnum::$PR_NUMBER"
+          echo "::set-output name=prnum::$PR_NUMBER"
 
       - name: Comment on PR with Job Status
         if: |
