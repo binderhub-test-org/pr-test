@@ -9,7 +9,7 @@ on:
 jobs:
   run-tests:
     if: |
-      ((github.event_name == 'push') && (github.ref == 'refs/head/main')) ||
+      ((github.event_name == 'push') && (github.ref == 'refs/heads/main')) ||
       ((github.event_name == 'push') && contains(github.ref, 'test-this-pr'))
     runs-on: ubuntu-latest
     steps:
@@ -47,11 +47,11 @@ jobs:
               --header 'Accept: application/vnd.github.v3+json')
     
             status=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
-            echo $status
+            echo "Status: $status"
     
             if [[ "$status" == "completed" ]]; then
               conclusion=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .conclusion')
-              echo $conclusion
+              echo "Conclusion: $conclusion"
             else
               sleep 10s
             fi
@@ -62,7 +62,7 @@ jobs:
   
       - name: Echo run-tests result
         if: |
-          ${{ steps.run-tests-result.output.status == 'completed' }} && ${{ steps.run-tests-result.output.conclusion != '' }}
+          ${{ steps.run-tests-result.output.status == 'completed' }}
         run: |
-          echo "Job status: ${{ steps.run-tests-result.output.conclusion }}"
+          echo "Job conclusion: ${{ steps.run-tests-result.output.conclusion }}"
   
