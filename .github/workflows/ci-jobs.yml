@@ -9,9 +9,8 @@ on:
 jobs:
   run-tests:
     if: |
-      (github.event_name == 'push') &&
-      ((github.ref == 'refs/head/main') ||
-      contains(github.ref, 'test-this-pr'))
+      ((github.event_name == 'push') && (github.ref == 'refs/head/main')) ||
+      ((github.event_name == 'push') && contains(github.ref, 'test-this-pr'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,9 +30,11 @@ jobs:
           python -m pytest -vvv
   
   report-status:
-    needs: run-tests
+    if: |
+      (jobs.run-tests.status == 'success') ||
+      (jobs.run-tests.status == 'success')
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Job status: ${{ needs.run-tests.result }}"
+          echo "Job status: ${{ jobs.run-tests.status }}"
     
