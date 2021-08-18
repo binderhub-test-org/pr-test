@@ -6,10 +6,13 @@ on:
 
 jobs:
   run-test-this-pr:
+    permissions:
+      contents: write
+      issues: write
     runs-on: ubuntu-latest
     if: |
       (github.event.issue.pull_request != null) && contains(github.event.comment.body, '/test-this-pr')
     steps:
       - uses: sgibson91/test-this-pr-action@main
         with:
-          access_token: ${{ secrets.ACCESS_TOKEN }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
