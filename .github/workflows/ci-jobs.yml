@@ -60,14 +60,14 @@ jobs:
           echo "::set-output name=status::$status"
           echo "::set-output name=conclusion::$conclusion"
 
-      - name: Set PR_NUMBER as variable
+      - name: Set PR number as variable
         id: get-pr-number
         shell: bash
         run: |
           PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}')
           echo "::set-output name=prnum::$PR_NUMBER"
 
-      - name: Comment on PR with Job Status
+      - name: Comment on PR with Job Status and delete the branch
         if: |
           ${{ steps.run-tests-result.outputs.status == 'completed' }}
         uses: actions/github-script@v4.0.2
@@ -76,12 +76,18 @@ jobs:
           script: |
             var PR_NUMBER = process.env.PR_NUMBER;
             var JOB_STATUS = process.env.JOB_STATUS;
-            
+
+            github.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref
+            })
+
             github.issues.createComment({
               issue_number: PR_NUMBER,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Job status: ${JOB_STATUS}`
+              body: `**Job status:** ${JOB_STATUS}\nBranch ${context.ref} has been deleted`
             })
         env:
           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
