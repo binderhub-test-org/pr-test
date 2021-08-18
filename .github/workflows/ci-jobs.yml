@@ -62,7 +62,7 @@ jobs:
   
       - name: Echo run-tests result
         if: |
-          ${{ steps.run-tests-result.output.status == 'completed' }}
+          ${{ steps.run-tests-result.outputs.status == 'completed' }}
         run: |
-          echo "Job conclusion: ${{ steps.run-tests-result.output.conclusion }}"
+          echo "Job conclusion: ${{ steps.run-tests-result.outputs.conclusion }}"
   
