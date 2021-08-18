@@ -48,7 +48,12 @@ jobs:
     
           echo "::set-output name=status::$status"
           echo "::set-output name=conclusion::$conclusion"
-  
+
+      - name: Set PR_NUMBER as variable
+        id: get-pr-number
+        run: |
+          echo ${{ github.ref }}
+
 #       - name: Comment on PR with Job Status
 #         if: |
 #           ${{ steps.run-tests-result.outputs.status == 'completed' }}
