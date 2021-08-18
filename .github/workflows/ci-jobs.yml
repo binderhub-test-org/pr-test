@@ -63,7 +63,8 @@ jobs:
       - name: Set PR_NUMBER as variable
         id: get-pr-number
         run: |
-          echo ${{ github.ref }}
+          PR_NUMBER=$(echo ${{ github.ref }} | grep ".*\/(.*)")
+          echo $PR_NUMBER
 
 #       - name: Comment on PR with Job Status
 #         if: |
