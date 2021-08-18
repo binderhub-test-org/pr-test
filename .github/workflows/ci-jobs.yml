@@ -60,15 +60,12 @@ jobs:
           echo "::set-output name=status::$status"
           echo "::set-output name=conclusion::$conclusion"
 
-      - name: Set PR number and branch ref as variables
+      - name: Set PR number as variable
         id: get-pr-number
         shell: bash
         run: |
           PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}')
-          BRANCH_REF="heads/test-this-pr/${PR_NUMBER}"
-  
           echo "::set-output name=prnum::$PR_NUMBER"
-          echo "::set-output name=branch_ref::$BRANCH_REF"
 
       - name: Comment on PR with Job Status and delete the branch
         if: |
@@ -79,12 +76,11 @@ jobs:
           script: |
             var JOB_STATUS = process.env.JOB_STATUS;
             var PR_NUMBER = process.env.PR_NUMBER;
-            var GITHUB_REF = process.env.GITHUB_REF;
 
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: GITHUB_REF,
+              ref: `heads/test-this-pr/${PR_NUMBER}`,
             })
 
             github.issues.createComment({
@@ -96,4 +92,3 @@ jobs:
         env:
           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
           PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
-          GITHUB_REF: ${{ steps.get-pr-number.outputs.branch_ref }}
