@@ -30,11 +30,37 @@ jobs:
           python -m pytest -vvv
   
   report-status:
-    if: |
-      (jobs.run-tests.status == 'success') ||
-      (jobs.run-tests.status == 'success')
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Job status: ${{ jobs.run-tests.status }}"
+      - name: Wait for run-tests completion
+        id: run-tests-result
+        shell: bash
+        run: |
+          status=""
+          conclusion=""
     
+          while [ "$status" != "completed" ]; do
+            response=$(curl --request GET \
+              --url 'https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs' \
+              --header 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+              --header 'Accept: application/vnd.github.v3+json')
+    
+            status=$echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
+            echo $status
+    
+            if [[ $status == completed ]]; then
+              conclusion=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .conclusion')
+              echo $conclusion
+            else
+              sleep 10s
+            fi
+          done
+    
+          echo "::set-output name=status::$status"
+          echo "::set-output name=conclusion::$conclusion"
+  
+      - name: Echo run-tests result
+        if: ${{ steps.run-tests-result.output.status == 'completed' }}
+        run: |
+          echo "Job status: ${{ steps.run-tests-result.output.conclusion }}"
+  
