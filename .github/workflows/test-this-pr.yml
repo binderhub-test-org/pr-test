@@ -1,4 +1,4 @@
-name: Run test-this-pr action and report outcome
+name: Run test-this-pr action
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     types: [created]
 
 jobs:
-  test-action:
+  run-test-this-pr:
     runs-on: ubuntu-latest
     if: |
       (github.event.issue.pull_request != null) && contains(github.event.comment.body, '/test-this-pr')
@@ -17,61 +17,3 @@ jobs:
       - uses: sgibson91/test-this-pr-action@main
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
-
-  report-status:
-    if: github.event_name == 'push' && contains(github.ref, 'test-this-pr')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for run-tests completion
-        id: run-tests-result
-        shell: bash
-        run: |
-          status=""
-          conclusion=""
-    
-          while [ "$status" != "completed" ]; do
-            response=$(curl --silent --request GET \
-              --url 'https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs' \
-              --header 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
-              --header 'Accept: application/vnd.github.v3+json')
-    
-            status=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .status')
-            echo "Status: $status"
-    
-            if [[ "$status" == "completed" ]]; then
-              conclusion=$(echo $response | jq -r '.jobs[] | select(.name=="run-tests") | .conclusion')
-              echo "Conclusion: $conclusion"
-            else
-              sleep 10s
-            fi
-          done
-    
-          echo "::set-output name=status::$status"
-          echo "::set-output name=conclusion::$conclusion"
-
-      - name: Set PR_NUMBER as variable
-        id: get-pr-number
-        run: |
-          echo ${{ github.ref }}
-
-#       - name: Comment on PR with Job Status
-#         if: |
-#           ${{ steps.run-tests-result.outputs.status == 'completed' }}
-#         uses: actions/github-script@v4.0.2
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-#           script: |
-#             var PR_NUMBER = process.env.PR_NUMBER;
-#             var JOB_STATUS = process.env.JOB_STATUS;
-            
-#             github.issues.createComment({
-#               issue_number: ${PR_NUMBER},
-#               owner: context.repo.owner,
-#               repo: context.repo.repo,
-#               body: `Job status: ${JOB_STATUS}`
-#             })
-#         env:
-#           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
-#           PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
-            
-
