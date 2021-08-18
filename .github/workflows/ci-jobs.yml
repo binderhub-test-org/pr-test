@@ -74,13 +74,14 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var PR_NUMBER = process.env.PR_NUMBER;
             var JOB_STATUS = process.env.JOB_STATUS;
+            var PR_NUMBER = process.env.PR_NUMBER;
+            var GITHUB_REF = process.env.GITHUB_REF;
 
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: context.ref
+              ref: GITHUB_REF,
             })
 
             github.issues.createComment({
@@ -92,3 +93,4 @@ jobs:
         env:
           JOB_STATUS: ${{ steps.run-tests-result.outputs.conclusion }}
           PR_NUMBER: ${{ steps.get-pr-number.outputs.prnum }}
+          GITHUB_REF: ${{ github.ref }}
