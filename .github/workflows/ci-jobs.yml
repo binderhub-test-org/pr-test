@@ -64,7 +64,7 @@ jobs:
         id: get-pr-number
         shell: bash
         run: |
-          PR_NUMBER=$(echo ${${{ github.ref }}##*/})
+          PR_NUMBER=$(echo ${{ github.ref }} | awk -F'/' '{print $NF}'
           echo $PR_NUMBER
 
 #       - name: Comment on PR with Job Status
