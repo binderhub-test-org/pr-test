@@ -76,7 +76,13 @@ jobs:
           script: |
             var PR_NUMBER = process.env.PR_NUMBER;
             var JOB_STATUS = process.env.JOB_STATUS;
-            
+
+            github.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref
+            })
+
             github.issues.createComment({
               issue_number: PR_NUMBER,
               owner: context.repo.owner,
